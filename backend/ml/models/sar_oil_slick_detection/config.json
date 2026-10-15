@@ -1,0 +1,51 @@
+{
+  "model_type": "resnet_oil_slick_detection",
+  "task": "binary_classification",
+  "framework": "pytorch",
+  "architecture": {
+    "base_model": "ResNet",
+    "input_size": [224, 224],
+    "num_channels": 1,
+    "num_classes": 2,
+    "output_type": "confidence_score"
+  },
+  "training": {
+    "batch_size": 8,
+    "num_epochs": 15,
+    "learning_rate": 0.001,
+    "optimizer": "Adam",
+    "loss_function": "CrossEntropyLoss",
+    "training_samples": 1574,
+    "validation_samples": 1615
+  },
+  "performance": {
+    "final_train_loss": 0.344,
+    "final_val_loss": 0.189,
+    "final_train_accuracy": 0.851,
+    "final_val_accuracy": 0.948
+  },
+  "data": {
+    "source": "Sentinel-1 SAR",
+    "preprocessing": ["pyroSAR", "snappy"],
+    "image_format": "GeoTIFF",
+    "normalization": {
+      "mean": [0.485],
+      "std": [0.229]
+    }
+  },
+  "deployment": {
+    "input_format": "PIL Image or numpy array",
+    "output_format": "confidence score (0-1)",
+    "recommended_threshold": 0.5,
+    "inference_time": "< 100ms per image"
+  },
+  "tags": [
+    "sar",
+    "oil-slick-detection",
+    "maritime-monitoring",
+    "environmental-monitoring",
+    "satellite-imagery",
+    "resnet",
+    "pytorch"
+  ]
+}

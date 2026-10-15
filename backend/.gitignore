@@ -1,0 +1,23 @@
+# Environment variables and secrets
+.env
+*.env
+gee-key.json
+
+# Python cache
+__pycache__/
+*.py[cod]
+.ais_cache/
+
+# Node
+node_modules/
+
+# Downloaded/generated ML model weights
+backend/ml/models/*.pth
+backend/ml/models/*.pt
+backend/ml/models/*.zip
+backend/ml/models/_bad_extracted_dir*/
+
+# Keep model source/config files tracked
+!backend/ml/models/sar_oil_slick_detection/config.json
+!backend/ml/models/sar_oil_slick_detection/inference.py
+!backend/ml/models/sar_oil_slick_detection/README.md

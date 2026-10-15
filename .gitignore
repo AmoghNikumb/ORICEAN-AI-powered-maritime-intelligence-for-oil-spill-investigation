@@ -1,0 +1,33 @@
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Google Earth Engine credentials
+gee-key.json
+oricean1-ff91235779f4.json
+
+# Kaggle credentials
+kaggle.json
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.hypothesis/
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+.output/
+
+# IDE
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+oricean-511614-930f21d474a0.json
