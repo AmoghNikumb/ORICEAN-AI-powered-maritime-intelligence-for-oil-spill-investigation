@@ -26,6 +26,7 @@ Exported symbols:
 
 from __future__ import annotations
 
+import json
 import logging
 from datetime import datetime, timedelta, timezone
 from typing import Callable
@@ -438,7 +439,10 @@ async def _query_gfw(
         ("group-by", "VESSEL_ID"),
         ("temporal-resolution", temporal_resolution),
         ("spatial-resolution", "HIGH"),
-        ("spatial-aggregation", "false"),
+        # GFW only supports VESSEL_ID grouping for spatially aggregated JSON
+        # reports. Without this, the report request is rejected or returns no
+        # vessel rows even when AIS activity exists in the region.
+        ("spatial-aggregation", "true"),
         ("date-range", date_range),
     ]
     for i, ds in enumerate(datasets):
@@ -463,10 +467,22 @@ async def _query_gfw(
     )
 
     headers = {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
-    # GFW v3 4wings/report takes a custom area as a bare {"geojson": <geometry>}.
-    # The {"region": {"geojson": ...}} shape (used for named regions) is kept as a
-    # fallback in case the gateway contract changes.
-    bodies = [{"geojson": search_polygon}, {"region": {"geojson": search_polygon}}]
+    # GFW's documented custom-area format is a JSON-encoded GeoJSON
+    # FeatureCollection. Keep the geometry-object form as a compatibility
+    # fallback for gateway versions that accept the older payload shape.
+    search_feature_collection = {
+        "type": "FeatureCollection",
+        "features": [{
+            "type": "Feature",
+            "properties": {},
+            "geometry": search_polygon,
+        }],
+    }
+    bodies = [
+        {"geojson": json.dumps(search_feature_collection, separators=(",", ":"))},
+        {"geojson": search_polygon},
+        {"region": {"geojson": search_polygon}},
+    ]
 
     payload: dict | None = None
     last_status: int | None = None
@@ -636,6 +652,7 @@ async def _query_marinecadastre(
     import asyncio
     import csv
     import io as _io
+    import json as _io
     import os
     import zipfile
 
